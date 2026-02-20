@@ -8,31 +8,18 @@ import matplotlib.pyplot as plt
 # ============================================================
 
 def probability_union(PA, PB, PAB):
-    """
-    P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
-    """
     return PA + PB - PAB
 
 
 def conditional_probability(PAB, PB):
-    """
-    P(A|B) = P(A ∩ B) / P(B)
-    """
     return PAB / PB
 
 
 def are_independent(PA, PB, PAB, tol=1e-9):
-    """
-    True if:
-        |P(A ∩ B) - P(A)P(B)| < tol
-    """
     return abs(PAB - PA * PB) < tol
 
 
 def bayes_rule(PBA, PA, PB):
-    """
-    P(A|B) = P(B|A)P(A) / P(B)
-    """
     return (PBA * PA) / PB
 
 
@@ -41,17 +28,10 @@ def bayes_rule(PBA, PA, PB):
 # ============================================================
 
 def bernoulli_pmf(x, theta):
-    """
-    f(x, theta) = theta^x (1-theta)^(1-x)
-    """
     return (theta ** x) * ((1 - theta) ** (1 - x))
 
 
 def bernoulli_theta_analysis(theta_values):
-    """
-    Returns:
-        (theta, P0, P1, is_symmetric)
-    """
     results = []
     for theta in theta_values:
         P1 = bernoulli_pmf(1, theta)
@@ -67,36 +47,17 @@ def bernoulli_theta_analysis(theta_values):
 
 def normal_pdf(x, mu, sigma):
     """
-    Normal PDF:
-        1/(sqrt(2π)σ) * exp(-(x-μ)^2 / (2σ^2))
+    MUST return Python float (not numpy scalar)
     """
-    return (1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(
-        -((x - mu) ** 2) / (2 * sigma ** 2)
-    )
+    coefficient = 1 / (math.sqrt(2 * math.pi) * sigma)
+    exponent = -((x - mu) ** 2) / (2 * sigma ** 2)
+    return float(coefficient * math.exp(exponent))
 
 
-def normal_histogram_analysis(mu_values,
-                              sigma_values,
-                              n_samples=10000,
-                              bins=30):
-    """
-    For each (mu, sigma):
-
-    Return:
-        (
-            mu,
-            sigma,
-            sample_mean,
-            theoretical_mean,
-            mean_error,
-            sample_variance,
-            theoretical_variance,
-            variance_error
-        )
-    """
+def normal_histogram_analysis(mu_values, sigma_values, n_samples=10000, bins=30):
     results = []
     for mu, sigma in zip(mu_values, sigma_values):
-        samples = np.random.normal(loc=mu, scale=sigma, size=n_samples)
+        samples = np.random.normal(mu, sigma, n_samples)
         sample_mean = float(np.mean(samples))
         sample_variance = float(np.var(samples))
         theoretical_mean = float(mu)
@@ -121,41 +82,22 @@ def normal_histogram_analysis(mu_values,
 # ============================================================
 
 def uniform_mean(a, b):
-    """
-    (a + b) / 2
-    """
-    return (a + b) / 2.0
+    return (a + b) / 2
 
 
 def uniform_variance(a, b):
-    """
-    (b - a)^2 / 12
-    """
-    return ((b - a) ** 2) / 12.0
+    return (b - a) ** 2 / 12
 
 
-def uniform_histogram_analysis(a_values,
-                               b_values,
-                               n_samples=10000,
-                               bins=30):
-    """
-    For each (a, b):
 
-    Return:
-        (
-            a,
-            b,
-            sample_mean,
-            theoretical_mean,
-            mean_error,
-            sample_variance,
-            theoretical_variance,
-            variance_error
-        )
-    """
+def uniform_mean_variance(a, b):
+    return uniform_mean(a, b), uniform_variance(a, b)
+
+
+def uniform_histogram_analysis(a_values, b_values, n_samples=10000, bins=30):
     results = []
     for a, b in zip(a_values, b_values):
-        samples = np.random.uniform(low=a, high=b, size=n_samples)
+        samples = np.random.uniform(a, b, n_samples)
         sample_mean = float(np.mean(samples))
         sample_variance = float(np.var(samples))
         theoretical_mean = uniform_mean(a, b)
